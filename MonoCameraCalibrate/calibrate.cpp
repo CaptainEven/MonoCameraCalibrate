@@ -34,17 +34,24 @@ int main()
 	std::vector<std::string> file_list;
 
 	// generate list of chessboard image filename
-	for (int i = 1; i <= 20; ++i)
+	for (int i = 0; i < 30; ++i)
 	{
 
 		std::stringstream str;
-		str << "../chessboards/chessboard" << std::setw(2) << std::setfill('0') << i << ".jpg";
+		str << "../my_chessboard/chessboard" 
+			<< std::setw(2) << std::setfill('0') << i << ".jpg";
 		std::cout << str.str() << std::endl;
 
 		// collect images
 		file_list.push_back(str.str());
 
 		image = cv::imread(str.str(), 0);
+
+		//// resize to show
+		//cv::Mat img_rs;
+		//cv::resize(image, img_rs, cv::Size(1216, 912), cv::INTER_LINEAR);
+		//cv::imshow("Image", img_rs);
+
 		cv::imshow("Image", image);
 		cv::waitKey(100);  // 0.1s
 	}
@@ -53,19 +60,21 @@ int main()
 	CameraCalibrator camera_calibrator;
 
 	// add the corners from the chessboard
-	cv::Size board_size(6, 4);  // (points_per_row, points_per_col): (cols, rows)
+	cv::Size board_size(8, 6);  // (points_per_row, points_per_col): (cols, rows)
 	camera_calibrator.addChessboardPoints(
 		file_list,	// filenames of chessboard image
 		board_size);	// size of chessboard
 		// calibrate the camera
 	//	cameraCalibrator.setCalibrationFlag(true, true);
 
-	// Calibration
+	// ---------- Calibration
 	cv::Size img_size = image.size();
 	camera_calibrator.calibrate(img_size);
+	// ----------
 
 	// Image Undistortion
-	image = cv::imread(file_list[6]);
+	image = cv::imread(file_list[6]);  // undistort the id 6 image
+
 	cv::Mat uImage = camera_calibrator.remap(image);
 
 	// display camera matrix
@@ -75,10 +84,10 @@ int main()
 	std::cout << cameraMatrix.at<double>(1, 0) << " " << cameraMatrix.at<double>(1, 1) << " " << cameraMatrix.at<double>(1, 2) << std::endl;
 	std::cout << cameraMatrix.at<double>(2, 0) << " " << cameraMatrix.at<double>(2, 1) << " " << cameraMatrix.at<double>(2, 2) << std::endl;
 
-	imshow("Original Image", image);
-	imshow("Undistorted Image", uImage);
+	//imshow("Original Image", image);
+	//imshow("Undistorted Image", uImage);
+	//cv::waitKey();
 
-	cv::waitKey();
 	return 0;
 }
 

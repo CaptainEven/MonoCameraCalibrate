@@ -75,6 +75,12 @@ int CameraCalibrator::addChessboardPoints(
 
 		//Draw the corners
 		cv::drawChessboardCorners(image, board_size, img_corners, found);
+
+		//// resize to show
+		//cv::Mat img_rs;
+		//cv::resize(image, img_rs, cv::Size(1216, 912), cv::INTER_LINEAR);
+		//cv::imshow("Corners on Chessboard", img_rs);
+
 		cv::imshow("Corners on Chessboard", image);
 		cv::waitKey(100);
 	}
