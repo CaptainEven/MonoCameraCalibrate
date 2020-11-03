@@ -32,7 +32,7 @@ int CameraCalibrator::addChessboardPoints(
 	// 3D Scene Points:
 	// Initialize the chessboard corners 
 	// in the chessboard reference frame
-	// The corners are at 3D location (X,Y,Z)= (i,j,0)
+	// The corners are at 3D location (X, Y, Z)= (x, y, 0)
 	for (int y = 0; y < board_size.height; ++y)  // rows
 	{
 		for (int x = 0; x < board_size.width; ++x)  // cols
@@ -111,7 +111,7 @@ double CameraCalibrator::calibrate(const cv::Size& img_size)
 	std::vector<cv::Mat> rvecs, tvecs;
 
 	// start calibration
-	return calibrateCamera(m_obj_pts, // the 3D points
+	return cv::calibrateCamera(m_obj_pts, // the 3D points
 		m_img_pts,  // the image points
 		img_size,    // image size
 		camera_matrix, // output camera matrix
@@ -119,11 +119,10 @@ double CameraCalibrator::calibrate(const cv::Size& img_size)
 		rvecs, tvecs, // Rs, Ts 
 		flag);        // set options
 //						   cv::CALIB_USE_INTRINSIC_GUESS);
-
 }
 
 // remove distortion in an image (after calibration)
-cv::Mat CameraCalibrator::remap(const cv::Mat &image)
+cv::Mat CameraCalibrator::undistort(const cv::Mat &image)
 {
 
 	cv::Mat undistorted;
@@ -146,8 +145,7 @@ cv::Mat CameraCalibrator::remap(const cv::Mat &image)
 	}
 
 	// Apply mapping functions
-	cv::remap(image, undistorted, map_1, map_2,
-		cv::INTER_LINEAR);  // interpolation type
+	cv::remap(image, undistorted, map_1, map_2, cv::INTER_LINEAR);  // interpolation type
 
 	return undistorted;
 }

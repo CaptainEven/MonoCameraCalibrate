@@ -69,13 +69,14 @@ int main()
 
 	// ---------- Calibration
 	cv::Size img_size = image.size();
-	camera_calibrator.calibrate(img_size);
+	const double re_proj_err = camera_calibrator.calibrate(img_size);
+	printf("Reprojection error: %.3fpixel.\n", re_proj_err);
 	// ----------
 
 	// Image Undistortion
 	image = cv::imread(file_list[6]);  // undistort the id 6 image
 
-	cv::Mat uImage = camera_calibrator.remap(image);
+	cv::Mat img_undistort = camera_calibrator.undistort(image);
 
 	// display camera matrix
 	cv::Mat cameraMatrix = camera_calibrator.getCameraMatrix();
